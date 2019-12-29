@@ -34,7 +34,7 @@
 #define TIME_SIZE 		24
 #define DATA_MAX_SIZE 	64
 
-#define FILE_PATH "/home/nader/dataLog.txt"
+#define FILE_PATH "./dataLog.txt"
 /*********************** Decelerations ***********************/
 
 #pragma pack(push,1)
