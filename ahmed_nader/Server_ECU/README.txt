@@ -15,3 +15,5 @@ execute the .out file with passing the USB device file path which the Linux OS h
 for example, if your USB read as a file in "/dev/ttyUSB0" you must execute it as
 
 $ sudo ./worspace/Server_ECU/Debug/Server_ECU /dev/ttyUSB0
+
+note: PORT number for establishing Ethernet socket connection is 5454
