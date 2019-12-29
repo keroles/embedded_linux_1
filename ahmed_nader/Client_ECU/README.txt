@@ -15,3 +15,5 @@ for example
 
 $ sudo ./worspace/Client_ECU/Debug/Client_ECU 127.0.0.1  ==> for running server and Client in the same PC 
 $ sudo ./worspace/Client_ECU/Debug/Client_ECU <server-IP>  ==> for running server and Client in different PCs 
+
+note: PORT number for establishing Ethernet socket connection is 5454
