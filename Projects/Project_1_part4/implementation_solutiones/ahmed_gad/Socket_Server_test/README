@@ -1,0 +1,15 @@
+/*-----------------------------------------------------------
+- ECUA waiting data from user by Terminal 
+1- Massage ID must be unsigned and less than 11 bit
+2- DLC (data length Control) must be less than or equal 64
+3- data as string 
+
+-Sample of Input
+  ID:1245
+  DLC:8
+  Data:EngineON
+ - Process
+   add the time of packet transmition.
+  send whole packet in asscci.
+  seperate between every field by | seperator. 
+  ----------------------------------------------------------*/
