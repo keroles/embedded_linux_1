@@ -2,7 +2,7 @@
  * server.h
  *
  *  Created on: Dec 27, 2019
- *      Author: embedded_system_ks
+ *      Author: Mohamed Abo Raia
  */
 
 #ifndef SERVER_H_
@@ -10,25 +10,45 @@
 
 /*
  *        Function to send data to client
- * The function will open a socket and wait for a client to connect and send the data to him .
+ *        
+ * The function will open a socket and wait for a client to connect 
+ * and send the data to him .
  *
  * @param  : char *data  The data to be sent .
- * @return : The function will return 0 if every thing done correctly an -1 otherwise.
+ * @return : The function will return 0 if every thing done correctly 
+ * and -1 otherwise.
  *
  */
 int send_data(char *data);
 /*
- *       Function to read data from the terminal
- * The function will get a string from the terminal and store it in a buffer
- *
- * @param  : The function will take nothing.
- * @return : The function will return 0 if every thing done correctly and -1 otherwise.
- *
+ *   Thread for reading data from the terminal
+ *   
+ * This thread will just acquire mutex will read the data from the terminal
+ * then release the mutex and do it again and again .
+ *  
+ * @param  : pointer to void .
+ * @return : pointer to void . 
  */
-int read_data(void);
-
-void* read_data_from_terminal(void *x);
+void* read_data_from_terminal(void*);
+/*
+ *   Thread for sending data to the client
+ *   
+ * This thread will just call the function send data and it will do the whole work .
+ *  
+ * @param  : pointer to void .
+ * @return : pointer to void . 
+ */
 void* send_data_to_client(void *x);
+/*
+ *    Function to intilalize the server socket
+ * 
+ * The function will open a socket and bind the address and port number
+ * to it and will go into listening state waiting for a client request   
+ * 
+ * @param  : The function will take nothing .
+ * @return : The function will return the socket id .
+ * 
+ */
 int* server_init(void) ;
 
 

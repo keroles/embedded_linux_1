@@ -67,43 +67,33 @@ int recieve_data(void)
     time_t rx_time ;
 
 
+    // initialize the client 
     client_init();
 
 
 
     while (1)
     {
-
+    	// acquire mutex
     	pthread_mutex_lock(&mutex_1);
 
         // receive data from server
         temp = read(socket_id, data, sizeof(data) -1);
+        
+        // check for error
+        if (temp < 0)
+        {
+        	perror("read");
 
-       /* printf("%s\n", data);
+        	return -1;
+        }
 
-	    rx_time = time(NULL);
-
-	    printf("time : %s",  ctime(&rx_time));*/
-
+        // release mutex
         pthread_mutex_unlock(&mutex_1);
 
         sleep(1);
 
-
     }
-
-
-    // check for error
-    if (temp < 0)
-    {
-    	perror("read");
-
-    	return -1;
-    }
-
-    //close the socket
-    close(socket_id);
-
 
     // success
 	return 0;
@@ -130,38 +120,34 @@ int write_data(char *data)
     while (1)
     {
         sleep(2);
-
+        
+        // acquire mutex
     	pthread_mutex_lock(&mutex_1);
+    	
         // write data in the file
         ret_2 = write(output_file_id, (void *) data, strlen(data));
+        
+    	// check for error
+    	if (-1 == ret_2)
+    	{
+    		perror("write");
 
-        //memset(&data, '0', sizeof(data));
+    		close(output_file_id);
 
+    		return -1 ;
+    	}
+
+        // release mutex
         pthread_mutex_unlock(&mutex_1);
 
     }
-
-
-
-	// check for error
-	if (-1 == ret_2)
-	{
-		perror("write");
-
-		close(output_file_id);
-
-		return -1 ;
-	}
-
-
-	// close the output file
-	close(output_file_id);
 
 
 	//success
 	return 0;
 }
 
+// thread for recieving data from the server
 void* recieve_data_from_server(void *arg)
 {
 
@@ -170,7 +156,6 @@ void* recieve_data_from_server(void *arg)
 
     // Receive data from the server
     temp = recieve_data() ;
-
 
     // check for error
     if (temp == -1)
@@ -181,10 +166,9 @@ void* recieve_data_from_server(void *arg)
 
 
     return NULL ;
-
-
 }
 
+// thread for writing data in a file
 void* write_data_in_afile(void *arg)
 {
 
@@ -194,6 +178,7 @@ void* write_data_in_afile(void *arg)
 	return NULL;
 }
 
+// fuction to initialize the client
 int client_init(void)
 {
 
@@ -246,12 +231,14 @@ int client_init(void)
 
 }
 
+// signal handler for SIGINT 
 void signal_handler(int arg)
 {
 	int temp = 0;
 
 	pid_t pid ;
-
+	
+	// create new process
 	pid = fork() ;
 
 	// for the parent process
@@ -269,17 +256,18 @@ void signal_handler(int arg)
 		// close the output file
 		close(output_file_id);
 
-
-
+        // open the output file with gedit
 		temp = execl("/usr/bin/gedit", "gedit", "output_file.txt", NULL); ;
 
+		// check for error
 		if (temp < 0)
 		{
 			perror("execl");
 		}
 
 	}
-
+	
+	// check if there is an error when creating new process
 	else
 	{
 		perror("fork");

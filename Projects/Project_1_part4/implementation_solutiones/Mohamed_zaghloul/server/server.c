@@ -67,32 +67,29 @@ int send_data(char *data)
 	while (1)
 	{
 		sleep(2);
-
+		
+		// Acquire mutex
 		pthread_mutex_lock(&mutex_1);
-
+		
+	    // calculate the tx time
+	    tx_time = time(NULL);
+	    
 	    // send data to client
 	    temp = write(socket_cl, data, strlen(data));
-
-	    tx_time = time(NULL);
-
-	    printf("time : %s",  ctime(&tx_time));
-
-
+	    
+	    // check for error
+	    if (temp <= 0)
+	    {
+	      	perror("write");
+	       	return -1;
+	    }
+	    
+	    // release mutex
 	    pthread_mutex_unlock(&mutex_1);
 
 
 	}
 
-
-
-
-
-    // check for error
-    if (temp < 0)
-    {
-      	perror("write");
-       	return -1;
-    }
 
     // success
 	return 0;
@@ -100,31 +97,21 @@ int send_data(char *data)
 }
 
 
-// function to read the data from the terminal
-int read_data(void)
-{
-
-    // read data from the terminal
-	printf("Enter the data (max 100 char) : ");
-
-	fgets(data, sizeof(data), stdin) ;
-
-	// success
-	return 0;
-
-}
-
-void* read_data_from_terminal(void *x)
+// thread for reading data from the terminal
+void* read_data_from_terminal(void *arg)
 {
 	while (1)
 	{
 		sleep(1) ;
-
+		
+		// Acquire mutex
 		pthread_mutex_lock(&mutex_1);
 
 	    // read the data from the terminal
-		read_data() ;
-
+		printf("Enter the data (max 100 char) : ");
+		fgets(data, sizeof(data), stdin) ;
+		
+		// release the mutex
 		pthread_mutex_unlock(&mutex_1);
 
 
@@ -133,6 +120,7 @@ void* read_data_from_terminal(void *x)
 	return NULL;
 }
 
+// thread to send data to client
 void* send_data_to_client(void *x)
 {
     // send the data to the client
@@ -142,7 +130,7 @@ void* send_data_to_client(void *x)
 
 }
 
-
+// function to initialize the server socket
 int* server_init(void)
 {
 
@@ -152,7 +140,7 @@ int* server_init(void)
     static int socket_cl ;
     int len ;
 
-
+    // acquire mutex
 	pthread_mutex_lock(&mutex_1);
 
     // open a socket
@@ -223,7 +211,8 @@ int* server_init(void)
     }
 
     printf("Connection Established\n") ;
-
+    
+    // release mutex
     pthread_mutex_unlock(&mutex_1);
     // succcess
     return &socket_cl;
