@@ -1,0 +1,12 @@
+/*-----------------------------------------------------------------------------------
+ -waiting data from server to print report of msg received from the server 
+ -process
+  add the packet reception time.
+  parse the packet readable format.
+ -Sample of output
+  ID:22|DLC:3|data:HEY|TX time:Tue Dec 31 13:08:11 201|RX time:Tue Dec 31 13:08:11 2019
+  ----------------------------------------------------------------------------------------------
+  ID:1200|DLC:4|data:From|TX time:Tue Dec 31 13:08:28 201|RX time:Tue Dec 31 13:08:28 2019
+  ----------------------------------------------------------------------------------------------
+  ID:1|DLC:3|data:Gad|TX time:Tue Dec 31 13:08:49 201 201|RX time:|Tue Dec 31 13:08:49 201
+  ----------------------------------------------------------------------------------------------
