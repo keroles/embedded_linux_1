@@ -24,7 +24,7 @@
 #include <signal.h>
 
 // buffer to hold the data
-static char data[100] = {'0'} ;
+static char data[150] = {'\0'} ;
 
 pthread_mutex_t  mutex_1;
 static int socket_id ;
@@ -64,7 +64,7 @@ int recieve_data(void)
 {
 
     int temp  = 0;
-    time_t rx_time ;
+
 
 
     // initialize the client 
@@ -77,9 +77,13 @@ int recieve_data(void)
     	// acquire mutex
     	pthread_mutex_lock(&mutex_1);
 
+    	memset(&data, '\0', sizeof(data)) ;
+
+
         // receive data from server
         temp = read(socket_id, data, sizeof(data) -1);
         
+
         // check for error
         if (temp < 0)
         {
@@ -105,6 +109,7 @@ int write_data(char *data)
 {
 
 	int ret_2 ;
+	time_t rx_time = 0;
 
 
     // open the output file
@@ -121,12 +126,22 @@ int write_data(char *data)
     {
         sleep(2);
         
+    	char rx_time_s[30] = "Rx Time : " ;
+
+
         // acquire mutex
     	pthread_mutex_lock(&mutex_1);
     	
+    	// calculate the recieve time
+	    rx_time = time(NULL);
+	    strcat(rx_time_s, ctime(&rx_time)) ;
+
+	    // add the recieve time to the data
+	    strcat(data, rx_time_s) ;
+
         // write data in the file
         ret_2 = write(output_file_id, (void *) data, strlen(data));
-        
+
     	// check for error
     	if (-1 == ret_2)
     	{
@@ -136,6 +151,11 @@ int write_data(char *data)
 
     		return -1 ;
     	}
+
+
+	    // clear the buffer
+	    memset(&rx_time_s, '\0', sizeof(rx_time_s)) ;
+
 
         // release mutex
         pthread_mutex_unlock(&mutex_1);

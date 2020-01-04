@@ -24,7 +24,7 @@
 
 
 // buffer to hold the data
-static char data[100] ;
+static char data[125] ;
 
 pthread_mutex_t  mutex_1;
 
@@ -57,6 +57,7 @@ int send_data(char *data)
 	int *socket_id ;
 	int socket_cl ;
 
+
 	time_t tx_time = 0;
 
 	// initialize the server
@@ -68,15 +69,25 @@ int send_data(char *data)
 	{
 		sleep(2);
 		
+		char tx_time_s[30] = "Tx Time : " ;
+
+
 		// Acquire mutex
 		pthread_mutex_lock(&mutex_1);
 		
 	    // calculate the tx time
 	    tx_time = time(NULL);
-	    
+	    strcat(tx_time_s, ctime(&tx_time)) ;
+
+	    // add the transmit time to the data
+	    strcat(data, tx_time_s) ;
+
+
 	    // send data to client
 	    temp = write(socket_cl, data, strlen(data));
 	    
+
+
 	    // check for error
 	    if (temp <= 0)
 	    {
@@ -84,6 +95,9 @@ int send_data(char *data)
 	       	return -1;
 	    }
 	    
+	    // clear the buffer
+	    memset(&tx_time_s, '\0', sizeof(tx_time_s)) ;
+
 	    // release mutex
 	    pthread_mutex_unlock(&mutex_1);
 
@@ -100,6 +114,8 @@ int send_data(char *data)
 // thread for reading data from the terminal
 void* read_data_from_terminal(void *arg)
 {
+
+
 	while (1)
 	{
 		sleep(1) ;
@@ -107,10 +123,13 @@ void* read_data_from_terminal(void *arg)
 		// Acquire mutex
 		pthread_mutex_lock(&mutex_1);
 
+		// clear the buffer
+		memset(&data, '\0', sizeof(data)) ;
+
 	    // read the data from the terminal
-		printf("Enter the data (max 100 char) : ");
+		printf("Enter the can packet like -->(ID : 30, DLC : 4, Data : FFFFFFFF) : ");
 		fgets(data, sizeof(data), stdin) ;
-		
+
 		// release the mutex
 		pthread_mutex_unlock(&mutex_1);
 
