@@ -42,8 +42,8 @@ setenv bootcmd 'fatload mmc 0:1 ${mmcLoadAddr} test.elf ;
 ==========================================================================================================================     
 Prerequisites to run OTA project 
 =================================
-•	Uboot           => executable uboot for xexpress 
+•	Uboot           => executable uboot for vexpress 
 •	KS_SD_512M.img  => Virtual SD card 
-•	lab2.sh         => shell script to our vexpress on QEMU
+•	lab2.sh         => shell script to vexpress on QEMU
 
 ./lab2.sh <u-boot_PATH>u-boot/u-boot KS_SD_512M.img
