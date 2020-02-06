@@ -8,24 +8,25 @@ Vexpress kit is connected with SD Card which contains:
 
 Project Steps:
 =================
-	1- load test.elf file from MMC to ram in address 0x73000000;
-	2- save the size of test.elf , downloaded from MMC;
-	3- load test.elf file from TFTP to ram in address 0x70000000;
-	4- if (succeeded){
-		  save the size of test.elf, downloaded from tftp server;
-		  if ( MMC_file_size == tftp_file_size ){
-			  remove old backup.elf file from sdcard;
-			  save new image ,downloaded from TFTP server, to MMC uner test.elf;
-			  save old image ,already exist in mmc, to MMC uner backup.elf;
-			  boot test.elf;
-		  }
-		  else{
-			  boot test.elf;
-		  }
-	  }
-	  else{
-		  boot test.elf;
-	  }
+	load test.elf file from MMC to ram in address 0x73000000
+	save test.elf size downloaded from MMC
+	setup TFTP credentials
+	if (load test.elf file from TFTP to ram in address 0x70000000)
+	{
+		save test.elf size downloaded from tftp server
+		if ( MMC_file_size == tftp_file_size )
+		{
+			print "same FW version"
+		}
+		else{
+			print "same FW version"
+			remove old backup.elf file from sdcard
+			save new image ,downloaded from TFTP server, to MMC uner test.elf
+			save old image ,already exist in mmc, to MMC uner backup.elf
+		}
+	}
+	boot test.elf
+	
 =======================================================================================================================
 pre-built environment variables
 ==================================
