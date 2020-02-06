@@ -1,0 +1,48 @@
+This is a simple proof of concept for over the air technology (OTA)
+In this project, QEMU Emulator is used, to emulate Vexpress development kit .besides, there is a a virtual SD card. 
+
+
+Vexpress kit is connected with SD Card which contains:
+  o	Test.elf 	      => The applications
+  o	Vexpress_blob   => pre-built environment variables 
+
+Project Steps:
+=================
+	1- load test.elf file from MMC to ram in address 0x73000000;
+	2- save the size of test.elf , downloaded from MMC;
+	3- load test.elf file from TFTP to ram in address 0x70000000;
+	4- if (succeeded){
+		  save the size of test.elf, downloaded from tftp server;
+		  if ( MMC_file_size == tftp_file_size ){
+			  remove old backup.elf file from sdcard;
+			  save new image ,downloaded from TFTP server, to MMC uner test.elf;
+			  save old image ,already exist in mmc, to MMC uner backup.elf;
+			  boot test.elf;
+		  }
+		  else{
+			  boot test.elf;
+		  }
+	  }
+	  else{
+		  boot test.elf;
+	  }
+=======================================================================================================================
+pre-built environment variables
+==================================
+setenv mmcLoadAddr 0x73000000 
+setenv tftpLoadAddr 0x70000000
+
+setenv bootcmd 'fatload mmc 0:1 ${mmcLoadAddr} test.elf ; 
+				setenv mmcFileSize $filesize ; dhcp ; setenv serverip 192.168.1.10;
+				if tftp ${tftpLoadAddr} test.elf ; then ; setenv tftpFileSize $filesize ;
+				if test "${tftpFileSize}" = "${mmcFileSize}";then ; echo "same FW version";
+				else ; echo "there is a new FW "; fatrm mmc 0:1 backup.elf ; fatwrite  mmc 0:1 ${mmcLoadAddr} backup.elf
+				${mmcFileSize} ; fatwrite mmc 0:1 ${tftpLoadAddr} test.elf ${tftpFileSize}; fi ; fi ; bootelf ${tftpLoadAddr}'      
+==========================================================================================================================     
+Prerequisites to run OTA project 
+=================================
+•	Uboot           => executable uboot for xexpress 
+•	KS_SD_512M.img  => Virtual SD card 
+•	lab2.sh         => shell script to our vexpress on QEMU
+
+./lab2.sh <u-boot_PATH>u-boot/u-boot KS_SD_512M.img
