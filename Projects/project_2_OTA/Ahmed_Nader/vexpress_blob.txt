@@ -3,6 +3,6 @@ setenv mmcLoadAddr 0x73000000
 
 setenv tftpLoadAddr 0x70000000
 
-setenv bootcmd 'fatload mmc 0:1 ${mmcLoadAddr} test.elf ; setenv mmcFileSize $filesize ; dhcp ; setenv serverip 192.168.1.10; if tftp ${tftpLoadAddr} test.elf ; then ; setenv tftpFileSize $filesize ; if test "${tftpFileSize}" = "${mmcFileSize}"; then ; echo "same FW version"; else ; echo "there is a new FW "; fatrm mmc 0:1 backup.elf ; fatwrite  mmc 0:1 ${mmcLoadAddr} backup.elf ${mmcFileSize} ; fatwrite mmc 0:1 ${tftpLoadAddr} test.elf ${tftpFileSize} ; fi ; fi ; bootelf ${tftpLoadAddr}'
+setenv bootcmd 'fatload mmc 0:1 ${mmcLoadAddr} test.elf ;setenv mmcFileSize $filesize ;dhcp ;setenv serverip 192.168.50.188;if tftp ${tftpLoadAddr} test.elf ;then ;setenv tftpFileSize $filesize ;if test "${tftpFileSize}" = "${mmcFileSize}";then ;echo "same version";else ;echo "New version";fatrm mmc 0:1 backup.elf ; fatwrite  mmc 0:1 ${mmcLoadAddr} backup.elf ${mmcFileSize} ; fatwrite mmc 0:1 ${tftpLoadAddr} test.elf ${tftpFileSize}; fi ;else ;setenv tftpLoadAddr $mmcLoadAddr ;fi ;bootelf ${tftpLoadAddr}'
 
 ./lab2.sh /media/embedded_system_ks/Embedded_KS_labs/u-boot/u-boot KS_SD_512M.img
