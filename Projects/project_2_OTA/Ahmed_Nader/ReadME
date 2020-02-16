@@ -8,22 +8,25 @@ Vexpress kit is connected with SD Card which contains:
 
 Project Steps:
 =================
-	load test.elf file from MMC to ram in address 0x73000000
-	save test.elf size downloaded from MMC
+	load test.elf file from MMC to ram in address 0x73000000;
+	save test.elf size downloaded from MMC;
 	setup TFTP credentials
+	load test.elf file from TFTP to ram in address 0x70000000;
 	if (load test.elf file from TFTP to ram in address 0x70000000)
 	{
-		save test.elf size downloaded from tftp server
-		if ( MMC_file_size == tftp_file_size )
-		{
-			print "same FW version"
+		save test.elf size downloaded from TTFP server;
+		if ( MMC_file_size == tftp_file_size ){
+			print "same Version"
 		}
 		else{
-			print "same FW version"
-			remove old backup.elf file from sdcard
-			save new image ,downloaded from TFTP server, to MMC uner test.elf
-			save old image ,already exist in mmc, to MMC uner backup.elf
+			print "different Version"
+			remove old backup.elf file from SD card;
+			save new image ,downloaded from TFTP server, to MMC under test.elf;
+			save old image ,already exist in mmc, to MMC under backup.elf;
 		}
+	}
+	else{
+		load from 0x70000000 
 	}
 	boot test.elf
 	
@@ -33,12 +36,26 @@ pre-built environment variables
 setenv mmcLoadAddr 0x73000000 
 setenv tftpLoadAddr 0x70000000
 
-setenv bootcmd 'fatload mmc 0:1 ${mmcLoadAddr} test.elf ; 
-				setenv mmcFileSize $filesize ; dhcp ; setenv serverip 192.168.1.10;
-				if tftp ${tftpLoadAddr} test.elf ; then ; setenv tftpFileSize $filesize ;
-				if test "${tftpFileSize}" = "${mmcFileSize}";then ; echo "same FW version";
-				else ; echo "there is a new FW "; fatrm mmc 0:1 backup.elf ; fatwrite  mmc 0:1 ${mmcLoadAddr} backup.elf
-				${mmcFileSize} ; fatwrite mmc 0:1 ${tftpLoadAddr} test.elf ${tftpFileSize}; fi ; fi ; bootelf ${tftpLoadAddr}'      
+ setenv bootcmd 'fatload mmc 0:1 ${mmcLoadAddr} test.elf ;
+ setenv mmcFileSize $filesize ;
+ dhcp ;
+ setenv serverip 192.168.50.188;
+ if tftp ${tftpLoadAddr} test.elf ;
+ then;
+	setenv tftpFileSize $filesize ;
+	if test "${tftpFileSize}" = "${mmcFileSize}";
+	then ;
+		echo "same version";
+	else ;
+		echo "New version";
+		fatrm mmc 0:1 backup.elf ; 
+		fatwrite  mmc 0:1 ${mmcLoadAddr} backup.elf ${mmcFileSize};
+		fatwrite mmc 0:1 ${tftpLoadAddr} test.elf ${tftpFileSize};
+	fi;
+ else;
+	setenv tftpLoadAddr $mmcLoadAddr ;
+ fi;
+ bootelf ${tftpLoadAddr}'    
 ==========================================================================================================================     
 Prerequisites to run OTA project 
 =================================
